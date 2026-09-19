@@ -128,7 +128,9 @@
 			{/each}
 		</nav>
 
-		<div class="shrink-0 space-y-4 border-t p-4">
+		<!-- Identity only: signing out lives in the shared toolbar's account
+			 menu, so repeating it here was a second door to the same room. -->
+		<div class="shrink-0 border-t p-4">
 			<div class="flex items-center gap-3">
 				<Avatar fallback={initials} />
 				<div class="min-w-0 flex-1">
@@ -136,10 +138,6 @@
 					<p class="text-muted-foreground text-xs">Administrator</p>
 				</div>
 			</div>
-
-				<Button type="submit" variant="outline" size="sm" class="w-full"
-					onclick={() => session.signOut()}
-				>Sign out</Button>
 		</div>
 
 		<!-- Resize handle: a hairline with a wider hit area, draggable, focusable

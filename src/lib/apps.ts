@@ -13,17 +13,33 @@ export const apps: AppEntry[] = [
 		name: 'Bot studio',
 		href: PUBLIC_APP_BOT_STUDIO,
 		initials: 'BS',
-		color: '#7c3aed'
+		color: '#7c3aed',
+		description: 'Design, configure and publish conversational bots.'
 	},
 	{
 		id: 'monitoring',
 		name: 'Monitoring',
 		href: PUBLIC_APP_MONITORING,
 		initials: 'MO',
-		color: '#059669'
+		color: '#059669',
+		description: 'Live queues, response times and escalations.'
 	},
-	{ id: 'reporting', name: 'Reporting', href: '#', initials: 'RE', color: '#2563eb' },
-	{ id: 'agents', name: 'Agent desk', href: '#', initials: 'AG', color: '#dc2626' }
+	{
+		id: 'reporting',
+		name: 'Reporting',
+		href: '#',
+		initials: 'RE',
+		color: '#2563eb',
+		description: 'Scheduled reports and historical analysis.'
+	},
+	{
+		id: 'agents',
+		name: 'Agent desk',
+		href: '#',
+		initials: 'AG',
+		color: '#dc2626',
+		description: 'Where human agents pick up escalated conversations.'
+	}
 ];
 
 // The package stamps data-palette; app.css decides what each one means.
