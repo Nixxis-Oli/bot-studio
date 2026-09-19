@@ -171,6 +171,7 @@
 				size="icon"
 				class="-ms-1 size-8 shrink-0"
 				onclick={() => sidebar.toggle()}
+				data-tour="sidebar-toggle"
 				title="Toggle sidebar (Ctrl+B)"
 				aria-label="Toggle sidebar"
 				aria-expanded={!sidebar.collapsed}
@@ -200,9 +201,7 @@
 			</nav>
 
 			{#if onListScreen}
-				<!-- The tour's second step points at the sidebar, so it has to be on
-					 screen before that step is measured. -->
-				<ProductTour onStepEnter={(id) => id === 'sidebar' && sidebar.reveal()} />
+				<ProductTour />
 			{/if}
 
 			<ToolbarActions

@@ -1,10 +1,19 @@
-export interface TourStep {
-	id: string;
+export interface TourStepCopy {
 	title: string;
 	description: string;
 	/** CSS selector of the element to highlight. Omitted for a centred step. */
 	target?: string;
 	placement?: 'top' | 'bottom' | 'left' | 'right';
+}
+
+export interface TourStep extends TourStepCopy {
+	id: string;
+	/**
+	 * Used instead when the main target is not on screen - collapsed, hidden, or
+	 * scrolled away. Pointing at the control that reveals it beats either
+	 * spotlighting nothing or forcing the layout open behind the user's back.
+	 */
+	whenHidden?: TourStepCopy;
 }
 
 const PADDING = 8;
@@ -45,7 +54,7 @@ export function spotlightPath(rect: DOMRect | null, w: number, h: number): strin
 	return `path(evenodd, "${outer} ${hole}")`;
 }
 
-export function createTour(steps: TourStep[], onEnter?: (id: string) => void) {
+export function createTour(steps: TourStep[]) {
 	// -1 means closed; any other index is the step being shown.
 	let index = $state(-1);
 	let rect = $state<DOMRect | null>(null);
@@ -54,22 +63,21 @@ export function createTour(steps: TourStep[], onEnter?: (id: string) => void) {
 	let viewport = $state({ w: 0, h: 0 });
 
 	const step = $derived(index >= 0 ? steps[index] : null);
+	// Which wording is live: the step's own, or its hidden-target variant.
+	let fallback = $state(false);
+	const copy = $derived(step ? (fallback && step.whenHidden ? step.whenHidden : step) : null);
 
-	function measureTarget() {
-		const selector = step?.target;
-
+	function visible(selector: string | undefined): DOMRect | null {
 		if (!selector) {
-			rect = null;
-			return;
+			return null;
 		}
 
 		const measured = document.querySelector(selector)?.getBoundingClientRect();
 
-		// "No target" covers three cases, all of which would otherwise spotlight
-		// nothing useful: the element is absent, it is hidden (zero size), or it
-		// is off screen - a collapsed sidebar still measures 288px wide, it just
-		// sits at a negative x. Any of them falls back to a centred panel.
-		const visible =
+		// "Not visible" covers three cases, all of which would otherwise spotlight
+		// nothing useful: absent, zero-sized, or off screen - a collapsed sidebar
+		// still measures 288px wide, it just sits at a negative x.
+		const ok =
 			!!measured &&
 			measured.width > 0 &&
 			measured.height > 0 &&
@@ -78,7 +86,27 @@ export function createTour(steps: TourStep[], onEnter?: (id: string) => void) {
 			measured.left < viewport.w &&
 			measured.top < viewport.h;
 
-		rect = visible ? measured : null;
+		return ok ? (measured as DOMRect) : null;
+	}
+
+	function measureTarget() {
+		if (!step) {
+			rect = null;
+			return;
+		}
+
+		const main = visible(step.target);
+
+		if (main || !step.whenHidden) {
+			fallback = false;
+			rect = main;
+			return;
+		}
+
+		// The main target is not on screen: switch to the alternative wording and
+		// point at whatever it names instead.
+		fallback = true;
+		rect = visible(step.whenHidden.target);
 	}
 
 	function syncViewport() {
@@ -87,22 +115,20 @@ export function createTour(steps: TourStep[], onEnter?: (id: string) => void) {
 
 	function enter() {
 		syncViewport();
-		onEnter?.(steps[index]?.id ?? '');
 
-		// The host may have just opened a panel; measure once it has been laid
-		// out, and again after the slide-in so the spotlight lands on its final
-		// position rather than its starting one.
+		// Measured again on the next frame: a layout that is mid-animation when
+		// the step opens would otherwise be caught at its starting position.
 		measureTarget();
 		requestAnimationFrame(measureTarget);
-		setTimeout(measureTarget, 220);
 	}
 
 	return {
 		get open() {
 			return index >= 0;
 		},
-		get step() {
-			return step;
+		/** The wording to show - the step's own, or its hidden-target variant. */
+		get copy() {
+			return copy;
 		},
 		get rect() {
 			return rect;

@@ -19,7 +19,13 @@
 			target: '[data-tour="sidebar"]',
 			placement: 'right',
 			title: 'Navigation',
-			description: 'Every section lives here. Ctrl+B hides the panel when you need room.'
+			description: 'Every section lives here. Ctrl+B hides the panel when you need room.',
+			whenHidden: {
+				target: '[data-tour="sidebar-toggle"]',
+				placement: 'bottom',
+				title: 'Navigation',
+				description: 'The panel is hidden right now. This button brings it back - it holds every section of the application.'
+			}
 		},
 		{
 			id: 'filter',
@@ -37,14 +43,7 @@
 		}
 	];
 
-	// The host decides how to make a step's target visible - the tour only says
-	// which step it is about to show. That keeps this component ignorant of the
-	// sidebar while still letting the sidebar step work.
-	type Props = { onStepEnter?: (id: string) => void };
-
-	let { onStepEnter }: Props = $props();
-
-	const tour = createTour(steps, (id) => onStepEnter?.(id));
+	const tour = createTour(steps);
 
 	// The spotlight is drawn in viewport coordinates, so it has to follow
 	// scrolling and resizing. The popover repositions itself.
@@ -88,7 +87,7 @@
 
 {#snippet card()}
 	<div class="flex items-start justify-between gap-3">
-		<h2 class="font-semibold">{tour.step?.title}</h2>
+		<h2 class="font-semibold">{tour.copy?.title}</h2>
 		<button
 			type="button"
 			onclick={() => tour.dismiss()}
@@ -99,7 +98,7 @@
 		</button>
 	</div>
 
-	<p class="text-muted-foreground text-sm">{tour.step?.description}</p>
+	<p class="text-muted-foreground text-sm">{tour.copy?.description}</p>
 
 	<div class="flex items-center justify-between gap-3 border-t pt-3">
 		<span class="text-muted-foreground text-xs">{tour.progress}</span>
@@ -144,14 +143,14 @@
 	</Portal>
 {/if}
 
-{#if tour.open && tour.rect && tour.step}
+{#if tour.open && tour.rect && tour.copy}
 	<!-- Anchored to the highlighted element. Popover keeps it in view, flipping
 		 side when there is no room. -->
 	<Popover.Root open>
 		<Popover.Portal>
 		<Popover.Content
-			customAnchor={tour.step.target}
-			side={tour.step.placement ?? 'bottom'}
+			customAnchor={tour.copy.target}
+			side={tour.copy.placement ?? 'bottom'}
 			sideOffset={14}
 			trapFocus={false}
 			escapeKeydownBehavior="ignore"
