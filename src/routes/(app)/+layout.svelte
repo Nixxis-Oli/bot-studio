@@ -3,13 +3,13 @@
 	import { introHref } from '$lib/paths';
 	import { page } from '$app/state';
 	import { buildBreadcrumbs } from '$lib/breadcrumbs';
-	import Avatar from '$lib/components/ui/avatar.svelte';
 	import Badge from '$lib/components/ui/badge.svelte';
 	import Button from '$lib/components/ui/button.svelte';
 	import { navSections } from '$lib/nav';
 	import { session } from '$lib/session.svelte';
 	import { createSidebar, MAX_WIDTH, MIN_WIDTH } from '$lib/sidebar.svelte';
 	import { cn } from '$lib/utils';
+	import ProductTour from '$lib/components/product-tour.svelte';
 	import { apps, palettes } from '$lib/apps';
 	import { ToolbarActions } from '@nixxis-oli/ui';
 	import PanelLeft from '@lucide/svelte/icons/panel-left';
@@ -18,11 +18,16 @@
 
 	let { children }: { children: any } = $props();
 
-	const initials = $derived((session.user ?? '?').slice(0, 2).toUpperCase());
 	const crumbs = $derived(buildBreadcrumbs(page.url.pathname, page.data));
 
 
 	const sidebar = createSidebar();
+
+	// The tour walks the chat bots list, so its button belongs beside that
+	// breadcrumb - not on a detail screen where its steps have no targets.
+	const onListScreen = $derived(
+		page.url.pathname === `${base}/chatbots` || page.url.pathname === `${base}/chatbots/`
+	);
 
 	// The pre-paint script in app.html sets --sidebar-width on :root; this
 	// keeps it in step while the handle is dragged.
@@ -128,18 +133,6 @@
 			{/each}
 		</nav>
 
-		<!-- Identity only: signing out lives in the shared toolbar's account
-			 menu, so repeating it here was a second door to the same room. -->
-		<div class="shrink-0 border-t p-4">
-			<div class="flex items-center gap-3">
-				<Avatar fallback={initials} />
-				<div class="min-w-0 flex-1">
-					<p class="truncate text-sm font-medium">{session.user}</p>
-					<p class="text-muted-foreground text-xs">Administrator</p>
-				</div>
-			</div>
-		</div>
-
 		<!-- Resize handle: a hairline with a wider hit area, draggable, focusable
 			 and double-clickable to restore the default width. -->
 		<!-- WAI-ARIA's window-splitter pattern: a focusable separator carrying
@@ -205,6 +198,10 @@
 					{/each}
 				</ol>
 			</nav>
+
+			{#if onListScreen}
+				<ProductTour />
+			{/if}
 
 			<ToolbarActions
 				{apps}

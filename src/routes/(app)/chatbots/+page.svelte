@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { base } from '$app/paths';
-	import ProductTour from '$lib/components/product-tour.svelte';
 	import Badge from '$lib/components/ui/badge.svelte';
 	import Button from '$lib/components/ui/button.svelte';
 	import Card from '$lib/components/ui/card.svelte';
@@ -96,7 +95,6 @@
 		</div>
 
 		<div class="flex w-full flex-wrap items-center gap-3 sm:w-auto">
-			<ProductTour />
 			<Badge variant="muted">{bots.length} contexts</Badge>
 			<div data-tour="filter" class="min-w-0 flex-1 sm:flex-none">
 				<Input
