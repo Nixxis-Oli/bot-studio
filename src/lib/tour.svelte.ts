@@ -16,9 +16,7 @@ const RADIUS = 10;
  * with the even-odd fill rule leave a hole where they overlap - simpler than
  * reversing the winding of the second one.
  */
-export function spotlightPath(rect: DOMRect | null): string {
-	const w = window.innerWidth;
-	const h = window.innerHeight;
+export function spotlightPath(rect: DOMRect | null, w: number, h: number): string {
 	const outer = `M0,0 H${w} V${h} H0 Z`;
 
 	if (!rect) {
@@ -47,14 +45,17 @@ export function spotlightPath(rect: DOMRect | null): string {
 	return `path(evenodd, "${outer} ${hole}")`;
 }
 
-export function createTour(steps: TourStep[]) {
+export function createTour(steps: TourStep[], onEnter?: (id: string) => void) {
 	// -1 means closed; any other index is the step being shown.
 	let index = $state(-1);
 	let rect = $state<DOMRect | null>(null);
+	// Tracked rather than read at draw time, so a resize redraws the cut-out
+	// even when the highlighted element has not moved.
+	let viewport = $state({ w: 0, h: 0 });
 
 	const step = $derived(index >= 0 ? steps[index] : null);
 
-	function measure() {
+	function measureTarget() {
 		const selector = step?.target;
 
 		if (!selector) {
@@ -64,10 +65,36 @@ export function createTour(steps: TourStep[]) {
 
 		const measured = document.querySelector(selector)?.getBoundingClientRect();
 
-		// A hidden target - the sidebar on a phone, for instance - measures zero.
-		// Treating that as "no target" lets the step fall back to a centred panel
-		// rather than spotlighting a point in the corner.
-		rect = measured && measured.width > 0 && measured.height > 0 ? measured : null;
+		// "No target" covers three cases, all of which would otherwise spotlight
+		// nothing useful: the element is absent, it is hidden (zero size), or it
+		// is off screen - a collapsed sidebar still measures 288px wide, it just
+		// sits at a negative x. Any of them falls back to a centred panel.
+		const visible =
+			!!measured &&
+			measured.width > 0 &&
+			measured.height > 0 &&
+			measured.right > 0 &&
+			measured.bottom > 0 &&
+			measured.left < viewport.w &&
+			measured.top < viewport.h;
+
+		rect = visible ? measured : null;
+	}
+
+	function syncViewport() {
+		viewport = { w: window.innerWidth, h: window.innerHeight };
+	}
+
+	function enter() {
+		syncViewport();
+		onEnter?.(steps[index]?.id ?? '');
+
+		// The host may have just opened a panel; measure once it has been laid
+		// out, and again after the slide-in so the spotlight lands on its final
+		// position rather than its starting one.
+		measureTarget();
+		requestAnimationFrame(measureTarget);
+		setTimeout(measureTarget, 220);
 	}
 
 	return {
@@ -80,6 +107,9 @@ export function createTour(steps: TourStep[]) {
 		get rect() {
 			return rect;
 		},
+		get viewport() {
+			return viewport;
+		},
 		get isFirst() {
 			return index === 0;
 		},
@@ -91,12 +121,12 @@ export function createTour(steps: TourStep[]) {
 		},
 		start() {
 			index = 0;
-			measure();
+			enter();
 		},
 		next() {
 			if (index < steps.length - 1) {
 				index += 1;
-				measure();
+				enter();
 			} else {
 				index = -1;
 			}
@@ -104,13 +134,16 @@ export function createTour(steps: TourStep[]) {
 		prev() {
 			if (index > 0) {
 				index -= 1;
-				measure();
+				enter();
 			}
 		},
 		dismiss() {
 			index = -1;
 		},
-		/** Re-reads the target's position, for scroll and resize. */
-		measure
+		/** Re-reads the viewport and the target's position, for scroll and resize. */
+		measure() {
+			syncViewport();
+			measureTarget();
+		}
 	};
 }

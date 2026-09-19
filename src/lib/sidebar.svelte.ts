@@ -103,6 +103,15 @@ export function createSidebar() {
 		closeMobile() {
 			mobileOpen = false;
 		},
+		/** Bring the panel on screen, whichever layout is in play. */
+		reveal() {
+			if (desktop) {
+				collapsed = false;
+				persist(COLLAPSED_KEY, '0');
+			} else {
+				mobileOpen = true;
+			}
+		},
 		// Ctrl/Cmd+B, the shortcut shadcn's own sidebar uses.
 		handleShortcut(event: KeyboardEvent) {
 			if (event.key.toLowerCase() === 'b' && (event.metaKey || event.ctrlKey)) {

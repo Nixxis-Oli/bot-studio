@@ -3,7 +3,7 @@
 	import { createTour, spotlightPath, type TourStep } from '$lib/tour.svelte';
 	import CircleHelp from '@lucide/svelte/icons/circle-help';
 	import X from '@lucide/svelte/icons/x';
-	import { Popover } from 'bits-ui';
+	import { Popover, Portal } from 'bits-ui';
 
 	// A guided walkthrough built on bits-ui alone. Popover does the anchoring and
 	// the flipping through its customAnchor prop; the step machine, the backdrop
@@ -37,7 +37,14 @@
 		}
 	];
 
-	const tour = createTour(steps);
+	// The host decides how to make a step's target visible - the tour only says
+	// which step it is about to show. That keeps this component ignorant of the
+	// sidebar while still letting the sidebar step work.
+	type Props = { onStepEnter?: (id: string) => void };
+
+	let { onStepEnter }: Props = $props();
+
+	const tour = createTour(steps, (id) => onStepEnter?.(id));
 
 	// The spotlight is drawn in viewport coordinates, so it has to follow
 	// scrolling and resizing. The popover repositions itself.
@@ -108,12 +115,19 @@
 	</div>
 {/snippet}
 
+<!--
+	Every overlay is portalled to <body>. The trigger sits in a bar carrying
+	backdrop-blur, and backdrop-filter makes an ancestor the containing block for
+	position:fixed descendants - without this, the backdrop, the spotlight and the
+	panels are all laid out against that bar rather than the viewport.
+-->
 {#if tour.open}
+	<Portal>
 	<!-- Clipped with the even-odd rule, so the highlighted element keeps its own
 		 colours and stays sharp through the blur. -->
 	<div
 		class="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs"
-		style:clip-path={spotlightPath(tour.rect)}
+		style:clip-path={spotlightPath(tour.rect, tour.viewport.w, tour.viewport.h)}
 		onclick={() => tour.dismiss()}
 		role="presentation"
 	></div>
@@ -127,12 +141,14 @@
 			style:height="{tour.rect.height + 16}px"
 		></div>
 	{/if}
+	</Portal>
 {/if}
 
 {#if tour.open && tour.rect && tour.step}
 	<!-- Anchored to the highlighted element. Popover keeps it in view, flipping
 		 side when there is no room. -->
 	<Popover.Root open>
+		<Popover.Portal>
 		<Popover.Content
 			customAnchor={tour.step.target}
 			side={tour.step.placement ?? 'bottom'}
@@ -145,9 +161,12 @@
 			<Popover.Arrow class="text-popover" width={12} height={6} />
 			{@render card()}
 		</Popover.Content>
+		</Popover.Portal>
 	</Popover.Root>
 {:else if tour.open}
-	<!-- No target: a centred panel rather than an anchored one. -->
+	<!-- No target - absent, hidden or scrolled out of view: a centred panel
+		 rather than an anchor onto nothing. -->
+	<Portal>
 	<div class="fixed inset-0 z-50 flex items-center justify-center p-4">
 		<div
 			class="bg-popover text-popover-foreground w-80 max-w-[calc(100vw-2rem)] space-y-3 rounded-lg border p-4 shadow-xl"
@@ -155,4 +174,5 @@
 			{@render card()}
 		</div>
 	</div>
+	</Portal>
 {/if}

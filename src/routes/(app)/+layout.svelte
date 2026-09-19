@@ -200,7 +200,9 @@
 			</nav>
 
 			{#if onListScreen}
-				<ProductTour />
+				<!-- The tour's second step points at the sidebar, so it has to be on
+					 screen before that step is measured. -->
+				<ProductTour onStepEnter={(id) => id === 'sidebar' && sidebar.reveal()} />
 			{/if}
 
 			<ToolbarActions
