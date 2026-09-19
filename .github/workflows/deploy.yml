@@ -1,0 +1,68 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # The application and the shared package are separate repositories. Both
+      # are checked out as siblings so the file: dependency resolves, which is
+      # what stands in for a package registry while this is still a test.
+      - uses: actions/checkout@v7
+        with:
+          path: app
+
+      - uses: actions/checkout@v7
+        with:
+          repository: ${{ github.repository_owner }}/nixxis-ui
+          path: nixxis-ui
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Build the shared package
+        run: |
+          set -e
+          cd nixxis-ui
+          npm ci
+          npm run build
+
+      - name: Build the application
+        env:
+          BASE_PATH: /bot-studio
+          # Both applications are project pages under the same account.
+          PUBLIC_APP_BOT_STUDIO: https://${{ github.repository_owner }}.github.io/bot-studio/
+          PUBLIC_APP_MONITORING: https://${{ github.repository_owner }}.github.io/monitoring/
+        run: |
+          set -e
+          cd app
+          npm ci
+          npm run build
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: app/build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

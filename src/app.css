@@ -1,0 +1,214 @@
+@import 'tailwindcss';
+
+/* This is the shadcn model: the design system is OUR file. Every token below is
+   authored here and can be changed freely - nothing is inherited from a vendor
+   package. bits-ui supplies behaviour only, never looks.
+
+   `:where(.dark, .dark *)` matches <html class="dark"> itself, not only its
+   descendants, so :root-level rules flip too. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Tailwind only generates classes it can see. A dependency's markup is
+   outside the default scan, so the shared package has to be named. */
+@source "../node_modules/@nixxis-oli/ui/dist";
+
+/* ---------------------------------------------------------------------------
+   1. Neutrals and shape - shared by every palette.
+
+   These are shadcn-svelte's own default "neutral" base, copied verbatim from
+   its theming docs: every value is chroma 0, which is what makes the stock
+   shadcn look black and white rather than blue-grey.
+   --------------------------------------------------------------------------- */
+
+:root {
+	--radius: 0.65rem;
+
+	--background: oklch(1 0 0);
+	--foreground: oklch(0.145 0 0);
+
+	--card: oklch(1 0 0);
+	--card-foreground: oklch(0.145 0 0);
+
+	--popover: oklch(1 0 0);
+	--popover-foreground: oklch(0.145 0 0);
+
+	--secondary: oklch(0.97 0 0);
+	--secondary-foreground: oklch(0.205 0 0);
+
+	--muted: oklch(0.97 0 0);
+	--muted-foreground: oklch(0.556 0 0);
+
+	--destructive: oklch(0.577 0.245 27.325);
+	--destructive-foreground: oklch(0.985 0 0);
+
+	--success: oklch(0.6 0.14 155);
+	--success-foreground: oklch(0.985 0 0);
+
+	--border: oklch(0.922 0 0);
+	--input: oklch(0.922 0 0);
+}
+
+.dark {
+	--background: oklch(0.145 0 0);
+	--foreground: oklch(0.985 0 0);
+
+	--card: oklch(0.205 0 0);
+	--card-foreground: oklch(0.985 0 0);
+
+	--popover: oklch(0.205 0 0);
+	--popover-foreground: oklch(0.985 0 0);
+
+	--secondary: oklch(0.269 0 0);
+	--secondary-foreground: oklch(0.985 0 0);
+
+	--muted: oklch(0.269 0 0);
+	--muted-foreground: oklch(0.708 0 0);
+
+	--destructive: oklch(0.704 0.191 22.216);
+	--destructive-foreground: oklch(0.985 0 0);
+
+	--success: oklch(0.68 0.15 155);
+	--success-foreground: oklch(0.145 0 0);
+
+	--border: oklch(1 0 0 / 10%);
+	--input: oklch(1 0 0 / 15%);
+}
+
+/* ---------------------------------------------------------------------------
+   2. Palettes. `neutral` is the default and reproduces stock shadcn: a near
+      black primary in light mode, near white in dark. The coloured ones are
+      alternatives, each four lines we write and own.
+
+      Light first, dark after - same specificity, later wins.
+   --------------------------------------------------------------------------- */
+
+:root,
+:root[data-palette='neutral'] {
+	--primary: oklch(0.205 0 0);
+	--primary-foreground: oklch(0.985 0 0);
+	--accent: oklch(0.97 0 0);
+	--accent-foreground: oklch(0.205 0 0);
+	--ring: oklch(0.708 0 0);
+}
+
+:root[data-palette='blue'] {
+	--primary: oklch(0.52 0.19 263);
+	--primary-foreground: oklch(0.98 0.01 250);
+	--accent: oklch(0.95 0.03 263);
+	--accent-foreground: oklch(0.28 0.06 263);
+	--ring: oklch(0.52 0.19 263);
+}
+
+:root[data-palette='violet'] {
+	--primary: oklch(0.54 0.23 295);
+	--primary-foreground: oklch(0.98 0.01 300);
+	--accent: oklch(0.95 0.03 295);
+	--accent-foreground: oklch(0.3 0.08 295);
+	--ring: oklch(0.54 0.23 295);
+}
+
+:root[data-palette='emerald'] {
+	--primary: oklch(0.55 0.13 165);
+	--primary-foreground: oklch(0.98 0.01 160);
+	--accent: oklch(0.95 0.03 165);
+	--accent-foreground: oklch(0.3 0.06 165);
+	--ring: oklch(0.55 0.13 165);
+}
+
+:root[data-palette='amber'] {
+	--primary: oklch(0.63 0.16 60);
+	--primary-foreground: oklch(0.2 0.03 60);
+	--accent: oklch(0.95 0.04 75);
+	--accent-foreground: oklch(0.32 0.06 60);
+	--ring: oklch(0.63 0.16 60);
+}
+
+.dark,
+.dark[data-palette='neutral'] {
+	--primary: oklch(0.922 0 0);
+	--primary-foreground: oklch(0.205 0 0);
+	--accent: oklch(0.371 0 0);
+	--accent-foreground: oklch(0.985 0 0);
+	--ring: oklch(0.556 0 0);
+}
+
+.dark[data-palette='blue'] {
+	--primary: oklch(0.65 0.18 263);
+	--primary-foreground: oklch(0.17 0.02 265);
+	--accent: oklch(0.32 0.06 263);
+	--accent-foreground: oklch(0.97 0.01 250);
+	--ring: oklch(0.65 0.18 263);
+}
+
+.dark[data-palette='violet'] {
+	--primary: oklch(0.68 0.19 295);
+	--primary-foreground: oklch(0.17 0.02 265);
+	--accent: oklch(0.33 0.07 295);
+	--accent-foreground: oklch(0.97 0.01 250);
+	--ring: oklch(0.68 0.19 295);
+}
+
+.dark[data-palette='emerald'] {
+	--primary: oklch(0.7 0.14 165);
+	--primary-foreground: oklch(0.17 0.02 265);
+	--accent: oklch(0.32 0.05 165);
+	--accent-foreground: oklch(0.97 0.01 250);
+	--ring: oklch(0.7 0.14 165);
+}
+
+.dark[data-palette='amber'] {
+	--primary: oklch(0.78 0.15 70);
+	--primary-foreground: oklch(0.2 0.03 60);
+	--accent: oklch(0.33 0.05 70);
+	--accent-foreground: oklch(0.97 0.01 250);
+	--ring: oklch(0.78 0.15 70);
+}
+
+/* ---------------------------------------------------------------------------
+   3. Expose the tokens to Tailwind as bg-*, text-*, border-* utilities.
+   --------------------------------------------------------------------------- */
+
+@theme inline {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-success: var(--success);
+	--color-success-foreground: var(--success-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+	* {
+		@apply border-border;
+	}
+
+	body {
+		@apply bg-background text-foreground;
+		font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+	}
+}
+
+/* Default sidebar width when the pre-paint script cannot run. */
+:root {
+	--sidebar-width: 288px;
+}
