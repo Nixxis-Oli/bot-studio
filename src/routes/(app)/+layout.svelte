@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { base } from '$app/paths';
-	import { introHref } from '$lib/paths';
 	import { page } from '$app/state';
 	import { buildBreadcrumbs } from '$lib/breadcrumbs';
 	import Badge from '$lib/components/ui/badge.svelte';
@@ -86,11 +85,10 @@
 			sidebar.collapsed ? 'md:left-[calc(var(--sidebar-width)*-1)]' : 'md:left-0'
 		)}
 	>
-		<a
-			href={introHref}
-			title="Back to the mockup index"
-			class="hover:bg-accent flex h-[4.25rem] shrink-0 items-center gap-3 border-b px-5 transition-colors"
-		>
+		<!-- Not a link: the index page it used to point at belonged to the old
+			 single-repository mockup. Moving between applications is the app
+			 switcher's job now. -->
+		<div class="flex h-[4.25rem] shrink-0 items-center gap-3 border-b px-5">
 			<div
 				class="bg-primary text-primary-foreground flex size-9 shrink-0 items-center justify-center rounded-lg font-bold"
 			>
@@ -100,7 +98,7 @@
 				<p class="truncate font-semibold">ConnectionCode</p>
 				<p class="text-muted-foreground text-xs">Administration</p>
 			</div>
-		</a>
+		</div>
 
 		<nav class="flex-1 space-y-6 overflow-y-auto p-4">
 			{#each navSections as section (section.title)}
