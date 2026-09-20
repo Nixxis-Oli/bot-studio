@@ -90,13 +90,13 @@
 			 switcher's job now. -->
 		<div class="flex h-[4.25rem] shrink-0 items-center gap-3 border-b px-5">
 			<div
-				class="bg-primary text-primary-foreground flex size-9 shrink-0 items-center justify-center rounded-lg font-bold"
+				class="bg-primary text-primary-foreground flex size-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold"
 			>
-				C
+				BS
 			</div>
 			<div class="min-w-0">
-				<p class="truncate font-semibold">ConnectionCode</p>
-				<p class="text-muted-foreground text-xs">Administration</p>
+				<p class="truncate font-semibold">Bot studio</p>
+				<p class="text-muted-foreground text-xs">Design and publishing</p>
 			</div>
 		</div>
 

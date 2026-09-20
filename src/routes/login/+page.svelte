@@ -23,7 +23,7 @@
 	}
 </script>
 
-<svelte:head><title>Sign in - ConnectionCode</title></svelte:head>
+<svelte:head><title>Sign in - Bot studio</title></svelte:head>
 
 <div class="grid min-h-screen lg:grid-cols-2">
 	<aside class="bg-primary text-primary-foreground hidden flex-col justify-between p-12 lg:flex">

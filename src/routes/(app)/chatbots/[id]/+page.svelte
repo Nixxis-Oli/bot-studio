@@ -53,7 +53,7 @@
 	const dirty = $derived(JSON.stringify(draft) !== JSON.stringify(freshDraft()));
 </script>
 
-<svelte:head><title>{data.bot.name} - ConnectionCode</title></svelte:head>
+<svelte:head><title>{data.bot.name} - Bot studio</title></svelte:head>
 
 <form onsubmit={save}>
 	<header class="bg-card border-b px-8 py-5">

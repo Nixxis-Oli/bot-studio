@@ -83,7 +83,7 @@
 	}
 </script>
 
-<svelte:head><title>Chat bots - ConnectionCode</title></svelte:head>
+<svelte:head><title>Chat bots - Bot studio</title></svelte:head>
 
 <header class="bg-card border-b px-4 py-5 md:px-8 md:py-6">
 	<div class="flex flex-wrap items-end justify-between gap-4">

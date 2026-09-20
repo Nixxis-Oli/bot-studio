@@ -3,7 +3,7 @@
 	import Card from '$lib/components/ui/card.svelte';
 </script>
 
-<svelte:head><title>Supervision - ConnectionCode</title></svelte:head>
+<svelte:head><title>Supervision - Bot studio</title></svelte:head>
 
 <header class="bg-card border-b px-8 py-6">
 	<h1 class="text-2xl font-semibold tracking-tight">Supervision</h1>
