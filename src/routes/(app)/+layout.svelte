@@ -112,8 +112,11 @@
 
 					{#each section.items as item (item.href)}
 						{@const active = page.url.pathname.startsWith(`${base}${item.href}`)}
+						<!-- Tapping the entry already being shown navigates nowhere, so the
+							 overlay's own afterNavigate never fires for it. -->
 						<a
 							href="{base}{item.href}"
+							onclick={() => sidebar.closeMobile()}
 							class={cn(
 								'flex items-center justify-between gap-3 rounded-md px-3 py-2 text-sm transition-colors',
 								active

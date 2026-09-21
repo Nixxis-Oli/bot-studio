@@ -1,4 +1,5 @@
 import { browser } from '$app/environment';
+import { afterNavigate } from '$app/navigation';
 
 const COLLAPSED_KEY = 'sidebar_collapsed';
 const WIDTH_KEY = 'sidebar_width';
@@ -59,6 +60,18 @@ export function createSidebar() {
 			}
 		});
 	}
+
+	// Below md the sidebar covers the content it navigates to, so choosing a
+	// destination is the end of its job: leaving it up over the page it just
+	// opened is what makes a phone feel stuck. This catches navigation from
+	// anywhere, the back gesture included - but not a tap on the entry already
+	// being shown, which navigates nowhere, so the links close it themselves too.
+	//
+	// Above md `mobileOpen` is not what holds the sidebar open, so this is inert.
+	// Called during the layout's setup, which is where afterNavigate belongs.
+	afterNavigate(() => {
+		mobileOpen = false;
+	});
 
 	function persist(key: string, value: string) {
 		if (!browser) {
