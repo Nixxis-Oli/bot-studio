@@ -44,9 +44,10 @@ jobs:
       - name: Build the application
         env:
           BASE_PATH: /bot-studio
-          # Both applications are project pages under the same account.
+          # All three applications are project pages under the same account.
           PUBLIC_APP_BOT_STUDIO: https://${{ github.repository_owner }}.github.io/bot-studio/
           PUBLIC_APP_MONITORING: https://${{ github.repository_owner }}.github.io/monitoring/
+          PUBLIC_APP_ORGANIZATION: https://${{ github.repository_owner }}.github.io/organization/
         run: |
           set -e
           cd app

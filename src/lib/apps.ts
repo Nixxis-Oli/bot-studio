@@ -1,7 +1,11 @@
-import { PUBLIC_APP_BOT_STUDIO, PUBLIC_APP_MONITORING } from '$env/static/public';
+import {
+	PUBLIC_APP_BOT_STUDIO,
+	PUBLIC_APP_MONITORING,
+	PUBLIC_APP_ORGANIZATION
+} from '$env/static/public';
 import type { AppEntry, PaletteOption } from '@nixxis-oli/ui';
 
-// Both applications declare the same catalogue. In production this would come
+// Every application declares the same catalogue. In production this would come
 // from one endpoint; duplicating it here is what proves the shared toolbar does
 // not own it.
 //
@@ -25,11 +29,19 @@ export const apps: AppEntry[] = [
 		description: 'Live queues, response times and escalations.'
 	},
 	{
+		id: 'organization',
+		name: 'Organization',
+		href: PUBLIC_APP_ORGANIZATION,
+		initials: 'OR',
+		color: '#2563eb',
+		description: 'Members, access rights and organization settings.'
+	},
+	{
 		id: 'reporting',
 		name: 'Reporting',
 		href: '#',
 		initials: 'RE',
-		color: '#2563eb',
+		color: '#0891b2',
 		description: 'Scheduled reports and historical analysis.'
 	},
 	{
