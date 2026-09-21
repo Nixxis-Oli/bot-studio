@@ -18,6 +18,27 @@
 					document.documentElement.classList.add('dark');
 				}
 
+				// The avatar's initials, so the toolbar paints the signed-in person
+				// rather than the default account for one frame. Quoted here because
+				// CSS content() needs a quoted string.
+				const stored = localStorage.getItem('nixxis-user');
+				if (stored) {
+					const name = (JSON.parse(stored).name || '').trim();
+					const initials = name
+						.split(/\s+/)
+						.slice(0, 2)
+						.map((part) => part[0] || '')
+						.join('')
+						.toUpperCase();
+
+					if (initials) {
+						document.documentElement.style.setProperty(
+							'--nixxis-initials',
+							JSON.stringify(initials)
+						);
+					}
+				}
+
 				const width = parseInt(localStorage.getItem('sidebar_width') || '288', 10);
 				if (width >= 200 && width <= 480) {
 					document.documentElement.style.setProperty('--sidebar-width', width + 'px');
