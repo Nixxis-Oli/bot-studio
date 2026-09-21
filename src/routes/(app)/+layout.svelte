@@ -9,7 +9,7 @@
 	import { createSidebar, MAX_WIDTH, MIN_WIDTH } from '$lib/sidebar.svelte';
 	import { cn } from '$lib/utils';
 	import ProductTour from '$lib/components/product-tour.svelte';
-	import { apps, currentOrganizationId, organizations, palettes } from '$lib/apps';
+	import { apps, currentOrganizationId, organizations, palettes, userFor } from '$lib/apps';
 	import { ToolbarActions } from '@nixxis-oli/ui';
 	import PanelLeft from '@lucide/svelte/icons/panel-left';
 
@@ -206,7 +206,7 @@
 				{apps}
 				{palettes}
 				currentAppId="bot-studio"
-				user={{ name: session.user ?? 'Signed in', email: session.user ?? undefined }}
+				user={userFor(session.user)}
 				{organizations}
 				{currentOrganizationId}
 				onSignOut={() => session.signOut()}
