@@ -3,7 +3,7 @@ import {
 	PUBLIC_APP_MONITORING,
 	PUBLIC_APP_ORGANIZATION
 } from '$env/static/public';
-import type { AppEntry, PaletteOption } from '@nixxis-oli/ui';
+import type { AppEntry, OrganizationEntry, PaletteOption } from '@nixxis-oli/ui';
 
 // Every application declares the same catalogue. In production this would come
 // from one endpoint; duplicating it here is what proves the shared toolbar does
@@ -42,7 +42,8 @@ export const apps: AppEntry[] = [
 		href: '#',
 		initials: 'RE',
 		color: '#0891b2',
-		description: 'Scheduled reports and historical analysis.'
+		description: 'Scheduled reports and historical analysis.',
+		ready: false
 	},
 	{
 		id: 'agents',
@@ -50,9 +51,20 @@ export const apps: AppEntry[] = [
 		href: '#',
 		initials: 'AG',
 		color: '#dc2626',
-		description: 'Where human agents pick up escalated conversations.'
+		description: 'Where human agents pick up escalated conversations.',
+		ready: false
 	}
 ];
+
+// The organizations this account belongs to. Same story as the catalogue above:
+// a real deployment reads them from one endpoint, per signed-in user.
+export const organizations: OrganizationEntry[] = [
+	{ id: 'acme', name: 'ACME' },
+	{ id: 'globex', name: 'Globex', ready: false },
+	{ id: 'initech', name: 'Initech', ready: false }
+];
+
+export const currentOrganizationId = 'acme';
 
 // The package stamps data-palette; app.css decides what each one means.
 export const palettes: PaletteOption[] = [
