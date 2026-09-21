@@ -1,48 +1,29 @@
-import { browser } from '$app/environment';
 import { goto } from '$app/navigation';
 import { base } from '$app/paths';
+import { session as shared } from '@nixxis-oli/ui';
+import { userFor } from './apps';
 
-// Static build: there is no server to hold a session, so the fake login lives
-// entirely in the browser. It gates nothing real - it exists so the demo shows
-// the same screens as the server-backed mockups did.
-const KEY = 'mock_session';
-
-function read(): string | null {
-	if (!browser) {
-		return null;
-	}
-
-	try {
-		return localStorage.getItem(KEY);
-	} catch {
-		return null;
-	}
-}
-
+// The mock gate in front of the application. Who is signed in is NOT stored
+// here: it lives in the shared package, in sessionStorage, so every application
+// on the origin shows the same person. This module only decides where the
+// browser goes next.
 class Session {
-	user = $state<string | null>(read());
+	get user() {
+		return shared.user;
+	}
+
+	/** Reads the store without applying a default, for the route guard. */
+	restore() {
+		return shared.restore();
+	}
 
 	signIn(email: string) {
-		this.user = email;
-
-		try {
-			localStorage.setItem(KEY, email);
-		} catch {
-			// Blocked storage: the session simply does not survive a reload.
-		}
-
+		shared.signIn(userFor(email));
 		goto(`${base}/chatbots`);
 	}
 
 	signOut() {
-		this.user = null;
-
-		try {
-			localStorage.removeItem(KEY);
-		} catch {
-			// Nothing to clean up.
-		}
-
+		shared.signOut();
 		goto(`${base}/login`);
 	}
 }

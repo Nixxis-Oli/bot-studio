@@ -9,7 +9,7 @@
 	import { createSidebar, MAX_WIDTH, MIN_WIDTH } from '$lib/sidebar.svelte';
 	import { cn } from '$lib/utils';
 	import ProductTour from '$lib/components/product-tour.svelte';
-	import { apps, currentOrganizationId, organizations, palettes, userFor } from '$lib/apps';
+	import { apps, currentOrganizationId, currentUser, organizations, palettes } from '$lib/apps';
 	import { ToolbarActions } from '@nixxis-oli/ui';
 	import PanelLeft from '@lucide/svelte/icons/panel-left';
 
@@ -35,9 +35,12 @@
 	});
 
 	// No server to gate the route in a prerendered build, so the guard runs
-	// in the browser. It protects nothing real - the session is fake.
+	// in the browser. It protects nothing real - the session is fake. It reads
+	// the store directly rather than waiting for the toolbar to hydrate it,
+	// because the toolbar falls back to the default account when nothing is
+	// stored and the guard has to tell those two cases apart.
 	$effect(() => {
-		if (!session.user) {
+		if (!session.restore()) {
 			goto(`${base}/login`);
 		}
 	});
@@ -206,7 +209,7 @@
 				{apps}
 				{palettes}
 				currentAppId="bot-studio"
-				user={userFor(session.user)}
+				user={currentUser}
 				{organizations}
 				{currentOrganizationId}
 				onSignOut={() => session.signOut()}
